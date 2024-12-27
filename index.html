@@ -1,200 +1,184 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Reverse Billing System</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-    }
-    .invoice {
-      width: 210mm;
-      height: 297mm;
-      margin: 0 auto;
-      padding: 20mm;
-      background-color: #fdd3e3;
-      border: 1px solid #000;
-      box-sizing: border-box;
-    }
-    .header {
-      display: flex;
-      justify-content: space-between;
-      font-size: 14px;
-    }
-    .header div {
-      width: 48%;
-    }
-    h1 {
-      text-align: center;
-      margin-bottom: 20px;
-      font-size: 20px;
-      text-transform: uppercase;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
-      font-size: 14px;
-    }
-    table, th, td {
-      border: 1px solid black;
-    }
-    th, td {
-      padding: 8px;
-      text-align: center;
-    }
-    .totals {
-      margin-top: 10px;
-      font-size: 14px;
-    }
-    .totals div {
-      text-align: right;
-      margin-bottom: 5px;
-    }
-    .footer {
-      margin-top: 20px;
-      display: flex;
-      justify-content: space-between;
-      font-size: 14px;
-    }
-    .footer div {
-      width: 48%;
-    }
-    .print-btn {
-      display: block;
-      margin: 20px auto;
-      padding: 10px 20px;
-      background-color: #007bff;
-      color: #fff;
-      border: none;
-      cursor: pointer;
-    }
-    .print-btn:hover {
-      background-color: #0056b3;
-    }
-    @media print {
-      body {
-        margin: 0;
-        padding: 0;
-      }
-      .print-btn {
-        display: none;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reverse Billing System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .bill-container {
+            width: 800px;
+            border: 1px solid #000;
+            padding: 10px;
+            margin: 0 auto;
+        }
+        .header, .footer {
+            text-align: center;
+            font-weight: bold;
+        }
+        .section {
+            margin: 10px 0;
+        }
+        .section input {
+            border: none;
+            border-bottom: 1px solid #000;
+            text-align: center;
+        }
+        .products, .totals {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .products th, .products td, .totals th, .totals td {
+            border: 1px solid #000;
+            padding: 5px;
+            text-align: center;
+        }
+        .signature {
+            text-align: right;
+            margin-top: 20px;
+        }
+        .print-button {
+            text-align: center;
+            margin: 10px 0;
+        }
+        .print-button button {
+            padding: 5px 10px;
+            font-size: 16px;
+        }
+    </style>
 </head>
 <body>
-  <div class="invoice">
+
+<div class="bill-container">
     <div class="header">
-      <div>
-        <strong>GSTIN: </strong>07AGGPK5556M1ZX<br>
-        <strong>ANAS TRADERS</strong><br>
-        4760/2 Ground Floor, Jaipuria Building,<br>
-        Jogiwara, Nai Sarak, Delhi-06, Mob.: 9899558755
-      </div>
-      <div>
-        <strong>Date: </strong><span id="date"></span><br>
-        <strong>Book No.: </strong><span id="bookNo">24</span><br>
-        <strong>Invoice No.: </strong><span id="invoiceNo">831</span>
-      </div>
+        <div>GSTIN: 07AGGPK5556M1ZX</div>
+        <div>ANAS TRADERS</div>
+        <div>4760/2 Ground Floor, Jaipuria Building, Jogiwara, Nai Sarak, Delhi-06, Mob.: 9899558755</div>
+        <div><strong>Tax Invoice</strong></div>
     </div>
-    <h1>Tax Invoice</h1>
-    <table>
-      <thead>
-        <tr>
-          <th>Sr. No.</th>
-          <th>Description of Goods</th>
-          <th>HSN Code</th>
-          <th>Qty</th>
-          <th>Unit</th>
-          <th>Rate (₹)</th>
-          <th>Amount (₹)</th>
-        </tr>
-      </thead>
-      <tbody id="billBody">
-        <tr>
-          <td>1</td>
-          <td>Saree</td>
-          <td>5407</td>
-          <td id="sareeQty">-</td>
-          <td>PC</td>
-          <td id="sareeRate">-</td>
-          <td id="sareeAmount">-</td>
-        </tr>
-        <tr>
-          <td>2</td>
-          <td>Fabric</td>
-          <td>5408</td>
-          <td id="fabricQty">-</td>
-          <td>MTR</td>
-          <td id="fabricRate">-</td>
-          <td id="fabricAmount">-</td>
-        </tr>
-      </tbody>
+
+    <div class="section">
+        <div>Order No. & Date: <input type="text" id="orderDate"></div>
+        <div>GR/RR/DM/No.: <input type="text" id="grNo"></div>
+        <div>Dispatch From Delhi To: <input type="text" id="dispatchTo"></div>
+    </div>
+
+    <div class="section">
+        <div>BOOK NO.: <input type="text" id="bookNo"> INVOICE NO.: <input type="text" id="invoiceNo"></div>
+    </div>
+
+    <div class="section">
+        <div>Bill To: <strong>Cash</strong></div>
+    </div>
+
+    <table class="products">
+        <thead>
+            <tr>
+                <th>Sr. No.</th>
+                <th>Description of Goods</th>
+                <th>HSN Code</th>
+                <th>Qty</th>
+                <th>Unit</th>
+                <th>Rate</th>
+                <th>Amount</th>
+            </tr>
+        </thead>
+        <tbody id="productList">
+            <!-- Dynamic Rows will be inserted here -->
+        </tbody>
     </table>
-    <div class="totals">
-      <div><strong>Taxable Amount: </strong>₹<span id="taxableAmount">-</span></div>
-      <div><strong>SGST @2.5%: </strong>₹<span id="sgst">-</span></div>
-      <div><strong>CGST @2.5%: </strong>₹<span id="cgst">-</span></div>
-      <div><strong>Grand Total: </strong>₹<span id="grandTotal">-</span></div>
-    </div>
+
+    <table class="totals">
+        <tbody>
+            <tr>
+                <th>Total</th>
+                <td><span id="taxableAmount">0</span></td>
+            </tr>
+            <tr>
+                <th>SGST @ 2.5%</th>
+                <td><span id="sgst">0</span></td>
+            </tr>
+            <tr>
+                <th>CGST @ 2.5%</th>
+                <td><span id="cgst">0</span></td>
+            </tr>
+            <tr>
+                <th>Grand Total</th>
+                <td><input type="number" id="grandTotal" oninput="generateBill()"></td>
+            </tr>
+        </tbody>
+    </table>
+
     <div class="footer">
-      <div>
-        <strong>A.O.E: </strong>Goods once sold will not be taken back.
-      </div>
-      <div style="text-align: right;">
-        <strong>For ANAS TRADERS</strong><br><br>
-        ___________________________<br>
-        Auth. Signature
-      </div>
+        Invoice Value (in Words): _________________________________________ <br>
+        E.&O.E. <br>
+        Goods once sold will not be taken back
     </div>
-    <button class="print-btn" onclick="generateBill()">Generate Reverse Bill</button>
-    <button class="print-btn" onclick="window.print()">Print Invoice</button>
-  </div>
-  <script>
-    function generateBill() {
-      const grandTotal = parseFloat(prompt('Enter Grand Total (₹):'));
-      if (isNaN(grandTotal) || grandTotal <= 0) {
-        alert('Invalid Grand Total!');
-        return;
-      }
 
-      // Calculate taxes and taxable amount
-      const taxableAmount = (grandTotal / 1.05).toFixed(2);
-      const sgst = (taxableAmount * 0.025).toFixed(2);
-      const cgst = (taxableAmount * 0.025).toFixed(2);
+    <div class="signature">
+        For ANAS TRADERS<br>
+        Auth. Signature
+    </div>
 
-      // Update totals
-      document.getElementById('taxableAmount').innerText = taxableAmount;
-      document.getElementById('sgst').innerText = sgst;
-      document.getElementById('cgst').innerText = cgst;
-      document.getElementById('grandTotal').innerText = grandTotal;
+    <div class="print-button">
+        <button onclick="window.print()">Print</button>
+    </div>
+</div>
 
-      // Generate random quantities and rates
-      const sareeRate = 848.5;
-      const sareeQty = Math.floor(taxableAmount / sareeRate);
-      const sareeAmount = (sareeRate * sareeQty).toFixed(2);
+<script>
+    const products = [
+        { name: "Saree", min: 585, max: 985, hsn: "5408", unit: "PCS" },
+        { name: "Fabric", min: 85, max: 125, hsn: "5408", unit: "MTRS" },
+        { name: "Suit Unstitched", min: 2500, max: 5500, hsn: "5407", unit: "PCS" }
+    ];
 
-      const fabricRate = 89;
-      const fabricQty = Math.floor((taxableAmount - sareeAmount) / fabricRate);
-      const fabricAmount = (fabricRate * fabricQty).toFixed(2);
-
-      // Populate table
-      document.getElementById('sareeQty').innerText = sareeQty;
-      document.getElementById('sareeRate').innerText = sareeRate;
-      document.getElementById('sareeAmount').innerText = sareeAmount;
-
-      document.getElementById('fabricQty').innerText = fabricQty;
-      document.getElementById('fabricRate').innerText = fabricRate;
-      document.getElementById('fabricAmount').innerText = fabricAmount;
+    function roundToNearest(value) {
+        return Math.round(value);
     }
 
-    // Set date
-    document.getElementById('date').innerText = new Date().toLocaleDateString('en-GB');
-  </script>
+    function generateBill() {
+        const grandTotal = parseFloat(document.getElementById("grandTotal").value) || 0;
+
+        if (grandTotal <= 0) return;
+
+        const sgst = roundToNearest((grandTotal * 2.5) / 100);
+        const cgst = roundToNearest((grandTotal * 2.5) / 100);
+        const taxableAmount = grandTotal - sgst - cgst;
+
+        document.getElementById("sgst").innerText = sgst;
+        document.getElementById("cgst").innerText = cgst;
+        document.getElementById("taxableAmount").innerText = taxableAmount;
+
+        let remaining = taxableAmount;
+        const productRows = [];
+
+        for (const product of products) {
+            const maxQty = Math.floor(remaining / product.min);
+            if (maxQty > 0) {
+                const price = Math.min(product.max, remaining / maxQty);
+                const amount = roundToNearest(price * maxQty);
+                remaining -= amount;
+
+                productRows.push(`
+                    <tr>
+                        <td>${productRows.length + 1}</td>
+                        <td>${product.name}</td>
+                        <td>${product.hsn}</td>
+                        <td>${maxQty}</td>
+                        <td>${product.unit}</td>
+                        <td>${price.toFixed(2)}</td>
+                        <td>${amount}</td>
+                    </tr>
+                `);
+            }
+        }
+
+        document.getElementById("productList").innerHTML = productRows.join("");
+    }
+</script>
+
 </body>
 </html>
-
