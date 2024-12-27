@@ -17,30 +17,26 @@
       padding: 20mm;
       background-color: #fdd3e3;
       border: 1px solid #000;
+      box-sizing: border-box;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 14px;
+    }
+    .header div {
+      width: 48%;
     }
     h1 {
       text-align: center;
       margin-bottom: 20px;
-    }
-    .form-group {
-      margin-bottom: 10px;
-    }
-    label {
-      font-weight: bold;
-      display: block;
-      margin-bottom: 5px;
-    }
-    input[type="text"], input[type="number"] {
-      width: 100%;
-      padding: 8px;
-      margin-bottom: 10px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
+      font-size: 20px;
+      text-transform: uppercase;
     }
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 20px;
+      margin-top: 10px;
       font-size: 14px;
     }
     table, th, td {
@@ -49,6 +45,23 @@
     th, td {
       padding: 8px;
       text-align: center;
+    }
+    .totals {
+      margin-top: 10px;
+      font-size: 14px;
+    }
+    .totals div {
+      text-align: right;
+      margin-bottom: 5px;
+    }
+    .footer {
+      margin-top: 20px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 14px;
+    }
+    .footer div {
+      width: 48%;
     }
     .print-btn {
       display: block;
@@ -75,41 +88,35 @@
 </head>
 <body>
   <div class="invoice">
-    <h1>Reverse Billing System</h1>
-    <div class="form-group">
-      <label for="invoiceNo">Invoice Number:</label>
-      <input type="text" id="invoiceNo" placeholder="Enter Invoice Number">
+    <div class="header">
+      <div>
+        <strong>GSTIN: </strong>07AGGPK5556M1ZX<br>
+        <strong>ANAS TRADERS</strong><br>
+        4760/2 Ground Floor, Jaipuria Building,<br>
+        Jogiwara, Nai Sarak, Delhi-06, Mob.: 9899558755
+      </div>
+      <div>
+        <strong>Date: </strong><span id="date"></span><br>
+        <strong>Book No.: </strong><span id="bookNo">24</span><br>
+        <strong>Invoice No.: </strong><span id="invoiceNo">831</span>
+      </div>
     </div>
-    <div class="form-group">
-      <label for="billbookNo">Bill Book Number:</label>
-      <input type="text" id="billbookNo" placeholder="Enter Bill Book Number">
-    </div>
-    <div class="form-group">
-      <label for="name">Customer Name:</label>
-      <input type="text" id="name" placeholder="Enter Customer Name">
-    </div>
-    <div class="form-group">
-      <label for="address">Address:</label>
-      <input type="text" id="address" placeholder="Enter Address">
-    </div>
-    <div class="form-group">
-      <label for="grandTotal">Grand Total (₹):</label>
-      <input type="number" id="grandTotal" placeholder="Enter Grand Total Amount">
-    </div>
-    <button class="print-btn" onclick="generateReverseBill()">Generate Reverse Bill</button>
-    <table id="billTable">
+    <h1>Tax Invoice</h1>
+    <table>
       <thead>
         <tr>
-          <th>Product</th>
+          <th>Sr. No.</th>
+          <th>Description of Goods</th>
           <th>HSN Code</th>
-          <th>Quantity</th>
+          <th>Qty</th>
           <th>Unit</th>
-          <th>Rate</th>
-          <th>Amount</th>
+          <th>Rate (₹)</th>
+          <th>Amount (₹)</th>
         </tr>
       </thead>
-      <tbody>
+      <tbody id="billBody">
         <tr>
+          <td>1</td>
           <td>Saree</td>
           <td>5407</td>
           <td id="sareeQty">-</td>
@@ -118,6 +125,7 @@
           <td id="sareeAmount">-</td>
         </tr>
         <tr>
+          <td>2</td>
           <td>Fabric</td>
           <td>5408</td>
           <td id="fabricQty">-</td>
@@ -125,56 +133,68 @@
           <td id="fabricRate">-</td>
           <td id="fabricAmount">-</td>
         </tr>
-        <tr>
-          <td>Suit</td>
-          <td>5407</td>
-          <td id="suitQty">-</td>
-          <td>PC</td>
-          <td id="suitRate">-</td>
-          <td id="suitAmount">-</td>
-        </tr>
       </tbody>
     </table>
+    <div class="totals">
+      <div><strong>Taxable Amount: </strong>₹<span id="taxableAmount">-</span></div>
+      <div><strong>SGST @2.5%: </strong>₹<span id="sgst">-</span></div>
+      <div><strong>CGST @2.5%: </strong>₹<span id="cgst">-</span></div>
+      <div><strong>Grand Total: </strong>₹<span id="grandTotal">-</span></div>
+    </div>
+    <div class="footer">
+      <div>
+        <strong>A.O.E: </strong>Goods once sold will not be taken back.
+      </div>
+      <div style="text-align: right;">
+        <strong>For ANAS TRADERS</strong><br><br>
+        ___________________________<br>
+        Auth. Signature
+      </div>
+    </div>
+    <button class="print-btn" onclick="generateBill()">Generate Reverse Bill</button>
     <button class="print-btn" onclick="window.print()">Print Invoice</button>
   </div>
   <script>
-    const sareeMin = 585, sareeMax = 985;
-    const fabricMin = 85, fabricMax = 125;
-    const suitMin = 2500, suitMax = 5500;
-
-    function generateReverseBill() {
-      const grandTotal = parseFloat(document.getElementById('grandTotal').value);
+    function generateBill() {
+      const grandTotal = parseFloat(prompt('Enter Grand Total (₹):'));
       if (isNaN(grandTotal) || grandTotal <= 0) {
-        alert('Please enter a valid grand total amount.');
+        alert('Invalid Grand Total!');
         return;
       }
 
-      // Randomly generate quantities and rates
-      const sareeRate = Math.floor(Math.random() * (sareeMax - sareeMin + 1)) + sareeMin;
-      const fabricRate = Math.floor(Math.random() * (fabricMax - fabricMin + 1)) + fabricMin;
-      const suitRate = Math.floor(Math.random() * (suitMax - suitMin + 1)) + suitMin;
+      // Calculate taxes and taxable amount
+      const taxableAmount = (grandTotal / 1.05).toFixed(2);
+      const sgst = (taxableAmount * 0.025).toFixed(2);
+      const cgst = (taxableAmount * 0.025).toFixed(2);
 
-      let suitQty = Math.floor(grandTotal / suitRate);
-      let remaining = grandTotal - (suitQty * suitRate);
+      // Update totals
+      document.getElementById('taxableAmount').innerText = taxableAmount;
+      document.getElementById('sgst').innerText = sgst;
+      document.getElementById('cgst').innerText = cgst;
+      document.getElementById('grandTotal').innerText = grandTotal;
 
-      let fabricQty = Math.floor(remaining / fabricRate);
-      remaining -= (fabricQty * fabricRate);
+      // Generate random quantities and rates
+      const sareeRate = 848.5;
+      const sareeQty = Math.floor(taxableAmount / sareeRate);
+      const sareeAmount = (sareeRate * sareeQty).toFixed(2);
 
-      let sareeQty = Math.floor(remaining / sareeRate);
+      const fabricRate = 89;
+      const fabricQty = Math.floor((taxableAmount - sareeAmount) / fabricRate);
+      const fabricAmount = (fabricRate * fabricQty).toFixed(2);
 
       // Populate table
       document.getElementById('sareeQty').innerText = sareeQty;
-      document.getElementById('fabricQty').innerText = fabricQty;
-      document.getElementById('suitQty').innerText = suitQty;
-
       document.getElementById('sareeRate').innerText = sareeRate;
-      document.getElementById('fabricRate').innerText = fabricRate;
-      document.getElementById('suitRate').innerText = suitRate;
+      document.getElementById('sareeAmount').innerText = sareeAmount;
 
-      document.getElementById('sareeAmount').innerText = sareeQty * sareeRate;
-      document.getElementById('fabricAmount').innerText = fabricQty * fabricRate;
-      document.getElementById('suitAmount').innerText = suitQty * suitRate;
+      document.getElementById('fabricQty').innerText = fabricQty;
+      document.getElementById('fabricRate').innerText = fabricRate;
+      document.getElementById('fabricAmount').innerText = fabricAmount;
     }
+
+    // Set date
+    document.getElementById('date').innerText = new Date().toLocaleDateString('en-GB');
   </script>
 </body>
 </html>
+
