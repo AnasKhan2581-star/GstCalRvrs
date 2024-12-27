@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reverse Billing System</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    .invoice {
+      width: 210mm;
+      height: 297mm;
+      margin: 0 auto;
+      padding: 20mm;
+      background-color: #fdd3e3;
+      border: 1px solid #000;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .form-group {
+      margin-bottom: 10px;
+    }
+    label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 5px;
+    }
+    input[type="text"], input[type="number"] {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      font-size: 14px;
+    }
+    table, th, td {
+      border: 1px solid black;
+    }
+    th, td {
+      padding: 8px;
+      text-align: center;
+    }
+    .print-btn {
+      display: block;
+      margin: 20px auto;
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+    }
+    .print-btn:hover {
+      background-color: #0056b3;
+    }
+    @media print {
+      body {
+        margin: 0;
+        padding: 0;
+      }
+      .print-btn {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="invoice">
+    <h1>Reverse Billing System</h1>
+    <div class="form-group">
+      <label for="invoiceNo">Invoice Number:</label>
+      <input type="text" id="invoiceNo" placeholder="Enter Invoice Number">
+    </div>
+    <div class="form-group">
+      <label for="billbookNo">Bill Book Number:</label>
+      <input type="text" id="billbookNo" placeholder="Enter Bill Book Number">
+    </div>
+    <div class="form-group">
+      <label for="name">Customer Name:</label>
+      <input type="text" id="name" placeholder="Enter Customer Name">
+    </div>
+    <div class="form-group">
+      <label for="address">Address:</label>
+      <input type="text" id="address" placeholder="Enter Address">
+    </div>
+    <div class="form-group">
+      <label for="grandTotal">Grand Total (₹):</label>
+      <input type="number" id="grandTotal" placeholder="Enter Grand Total Amount">
+    </div>
+    <button class="print-btn" onclick="generateReverseBill()">Generate Reverse Bill</button>
+    <table id="billTable">
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>HSN Code</th>
+          <th>Quantity</th>
+          <th>Unit</th>
+          <th>Rate</th>
+          <th>Amount</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Saree</td>
+          <td>5407</td>
+          <td id="sareeQty">-</td>
+          <td>PC</td>
+          <td id="sareeRate">-</td>
+          <td id="sareeAmount">-</td>
+        </tr>
+        <tr>
+          <td>Fabric</td>
+          <td>5408</td>
+          <td id="fabricQty">-</td>
+          <td>MTR</td>
+          <td id="fabricRate">-</td>
+          <td id="fabricAmount">-</td>
+        </tr>
+        <tr>
+          <td>Suit</td>
+          <td>5407</td>
+          <td id="suitQty">-</td>
+          <td>PC</td>
+          <td id="suitRate">-</td>
+          <td id="suitAmount">-</td>
+        </tr>
+      </tbody>
+    </table>
+    <button class="print-btn" onclick="window.print()">Print Invoice</button>
+  </div>
+  <script>
+    const sareeMin = 585, sareeMax = 985;
+    const fabricMin = 85, fabricMax = 125;
+    const suitMin = 2500, suitMax = 5500;
+
+    function generateReverseBill() {
+      const grandTotal = parseFloat(document.getElementById('grandTotal').value);
+      if (isNaN(grandTotal) || grandTotal <= 0) {
+        alert('Please enter a valid grand total amount.');
+        return;
+      }
+
+      // Randomly generate quantities and rates
+      const sareeRate = Math.floor(Math.random() * (sareeMax - sareeMin + 1)) + sareeMin;
+      const fabricRate = Math.floor(Math.random() * (fabricMax - fabricMin + 1)) + fabricMin;
+      const suitRate = Math.floor(Math.random() * (suitMax - suitMin + 1)) + suitMin;
+
+      let suitQty = Math.floor(grandTotal / suitRate);
+      let remaining = grandTotal - (suitQty * suitRate);
+
+      let fabricQty = Math.floor(remaining / fabricRate);
+      remaining -= (fabricQty * fabricRate);
+
+      let sareeQty = Math.floor(remaining / sareeRate);
+
+      // Populate table
+      document.getElementById('sareeQty').innerText = sareeQty;
+      document.getElementById('fabricQty').innerText = fabricQty;
+      document.getElementById('suitQty').innerText = suitQty;
+
+      document.getElementById('sareeRate').innerText = sareeRate;
+      document.getElementById('fabricRate').innerText = fabricRate;
+      document.getElementById('suitRate').innerText = suitRate;
+
+      document.getElementById('sareeAmount').innerText = sareeQty * sareeRate;
+      document.getElementById('fabricAmount').innerText = fabricQty * fabricRate;
+      document.getElementById('suitAmount').innerText = suitQty * suitRate;
+    }
+  </script>
+</body>
+</html>
