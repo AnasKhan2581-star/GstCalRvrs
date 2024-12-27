@@ -3,173 +3,213 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reverse Billing</title>
+    <title>Tax Invoice</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            line-height: 1.5;
+        }
+
+        .invoice-container {
+            width: 210mm;
+            height: 297mm; /* A4 size */
+            margin: auto;
+            padding: 20mm;
+            box-sizing: border-box;
+            border: 1px solid #000;
+            position: relative;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .header h1 {
+            font-size: 22px;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .header h2 {
+            font-size: 18px;
+            margin: 0;
+            font-weight: bold;
+        }
+
+        .header p {
+            font-size: 14px;
+            margin: 0;
+        }
+
+        .section {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .section div {
+            width: 48%;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        th, td {
+            border: 1px solid #000;
+            padding: 5px;
+            text-align: left;
+        }
+
+        .totals {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+        }
+
+        .totals .amount-words {
+            width: 50%;
+        }
+
+        .totals .tax-summary {
+            width: 40%;
+            text-align: right;
+        }
+
+        .footer {
+            position: absolute;
+            bottom: 20mm;
+            left: 20mm;
+            right: 20mm;
+            font-size: 14px;
+        }
+
+        .footer p {
+            margin: 0;
+        }
+
+        .signature {
+            text-align: right;
+            margin-top: 30px;
+        }
+
+        .print-button {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        @media print {
+            .print-button {
+                display: none;
+            }
+
+            body {
+                margin: 0;
+                padding: 0;
+            }
+
+            .invoice-container {
+                margin: 0;
+                padding: 0;
+                border: none;
+                width: 100%;
+                height: 100%;
+            }
+        }
+    </style>
 </head>
-<body style="font-family: Arial, sans-serif; margin: 10px;">
+<body>
 
-<div style="max-width: 800px; margin: 0 auto; border: 1px solid #000; padding: 10px;">
-
-    <!-- Header Section -->
-    <div>
-        <div style="font-size: 16px; font-weight: bold;">GSTIN: 07AGGPK5556M1ZX</div>
-        <div style="font-size: 20px; font-weight: bold; text-transform: uppercase;">Anas Traders</div>
-        <div>4760/2 Ground Floor, Jaipuria Building, Jogiwara, Nai Sarak, Delhi-06, Mob.: 9899558755</div>
-        <div style="text-align: center; font-weight: bold; margin-top: 10px;">Tax Invoice</div>
+<div class="invoice-container">
+    <div class="header">
+        <p>GSTIN: 07AGGPK5556M1ZX</p>
+        <h1>ANAS TRADERS</h1>
+        <p>4760/2 Ground Floor, Jaipuria Building, Jogiwara, Nai Sarak, Delhi-06, Mob.: 9899558755</p>
+        <h2>Tax Invoice</h2>
     </div>
 
-    <!-- Invoice Details -->
-    <div style="display: flex; justify-content: space-between; margin-top: 10px; font-size: 14px;">
+    <!-- Invoice Details Section -->
+    <div class="section">
         <div>
-            <div>Invoice No.: <input type="text" id="invoiceNo" style="border: none; border-bottom: 1px solid #000;"></div>
-            <div>Dated: <input type="date" id="invoiceDate" style="border: none; border-bottom: 1px solid #000;"></div>
+            <p><strong>Consignee (Ship to):</strong></p>
+            <p>Name: ______________________________</p>
+            <p>Address: ____________________________</p>
+            <p>State Name: _________________________</p>
+            <p>State Code: ___________</p>
         </div>
         <div>
-            <div>Book No.: <input type="text" id="bookNo" style="border: none; border-bottom: 1px solid #000;"></div>
+            <p>Invoice No.: <input type="text" id="invoiceNo" style="border: none; border-bottom: 1px solid #000; width: 120px;"></p>
+            <p>Dated: <input type="date" id="invoiceDate" style="border: none; border-bottom: 1px solid #000;"></p>
+            <p>Delivery Note: _______________________</p>
+            <p>Delivery Terms: ______________________</p>
         </div>
     </div>
 
-    <div style="margin-top: 10px; font-size: 14px;">
-        <div>Bill To: <strong>Cash</strong></div>
-    </div>
+    <p><strong>Buyer (Bill to):</strong> Cash</p>
+    <p>State Name: ________________________</p>
+    <p>State Code: _________</p>
 
-    <!-- Table Header -->
-    <table style="width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14px;">
+    <!-- Product Table -->
+    <table id="productTable">
         <thead>
             <tr>
-                <th style="border: 1px solid #000; padding: 5px;">Sr. No.</th>
-                <th style="border: 1px solid #000; padding: 5px;">Description of Goods</th>
-                <th style="border: 1px solid #000; padding: 5px;">HSN Code</th>
-                <th style="border: 1px solid #000; padding: 5px;">Qty</th>
-                <th style="border: 1px solid #000; padding: 5px;">Unit</th>
-                <th style="border: 1px solid #000; padding: 5px;">Rate</th>
-                <th style="border: 1px solid #000; padding: 5px;">Amount</th>
+                <th>Sr. No.</th>
+                <th>Description of Goods</th>
+                <th>HSN Code</th>
+                <th>Qty</th>
+                <th>Unit</th>
+                <th>Rate</th>
+                <th>Amount</th>
             </tr>
         </thead>
-        <tbody id="productTable">
-            <!-- Dynamic Rows Will Be Added Here -->
+        <tbody>
+            <!-- Rows Will Be Dynamically Added -->
         </tbody>
     </table>
 
-    <div style="text-align: right; margin-top: 10px; font-size: 14px;">
-        <button onclick="addRow()" style="padding: 5px 10px; font-size: 14px;">Add Product</button>
-    </div>
-
     <!-- Totals Section -->
-    <table style="width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14px;">
-        <tr>
-            <th style="text-align: left;">Invoice Value (in Words):</th>
-            <td style="border: 1px solid #000; padding: 5px; text-align: right;" colspan="6"><span id="invoiceWords"></span></td>
-        </tr>
-        <tr>
-            <td colspan="6"></td>
-            <td style="border: 1px solid #000; padding: 5px;">
-                Taxable Amount: <span id="taxableAmount">0</span><br>
-                SGST (2.5%): <span id="sgst">0</span><br>
-                CGST (2.5%): <span id="cgst">0</span><br>
-                Grand Total: <span id="grandTotal">0</span>
-            </td>
-        </tr>
-    </table>
-
-    <div style="margin-top: 20px; font-size: 14px;">
-        E.&O.E.<br>
-        Goods once sold will not be taken back.
+    <div class="totals">
+        <div class="amount-words">
+            <p><strong>Amount Chargeable (in Words):</strong></p>
+            <p id="invoiceWords">______________________________________________________________________</p>
+        </div>
+        <div class="tax-summary">
+            <p>Taxable Amount: <span id="taxableAmount">0</span></p>
+            <p>SGST (2.5%): <span id="sgst">0</span></p>
+            <p>CGST (2.5%): <span id="cgst">0</span></p>
+            <p><strong>Grand Total: <span id="grandTotal">0</span></strong></p>
+        </div>
     </div>
 
-    <div style="text-align: right; margin-top: 20px;">
-        For ANAS TRADERS<br>
-        Auth. Signature
+    <!-- Footer Section -->
+    <div class="footer">
+        <p><strong>E.&O.E.</strong></p>
+        <p>Goods once sold will not be taken back.</p>
+        <p>We declare that this invoice shows the actual price of the goods described and that all particulars are true and correct.</p>
+        <div class="signature">
+            For ANAS TRADERS<br>
+            <br><br>
+            Auth. Signature
+        </div>
     </div>
 </div>
 
+<!-- Print Button -->
+<div class="print-button">
+    <button onclick="window.print()" style="padding: 10px 20px; font-size: 16px;">Print Invoice</button>
+</div>
+
 <script>
-    function addRow() {
-        const table = document.getElementById("productTable");
-
-        const row = document.createElement("tr");
-
-        // Dropdown for products
-        const productOptions = `
-            <option value="Saree" data-hsn="5407" data-unit="pcs">Saree</option>
-            <option value="Fabric" data-hsn="5408" data-unit="mtrs">Fabric</option>
-            <option value="Suit Unstitched" data-hsn="5407" data-unit="pcs">Suit Unstitched</option>
-        `;
-
-        row.innerHTML = `
-            <td>${table.rows.length + 1}</td>
-            <td>
-                <select onchange="updateRow(this)" style="width: 100%; border: none;">
-                    <option value="">Select</option>
-                    ${productOptions}
-                </select>
-            </td>
-            <td class="hsn" style="text-align: center;"></td>
-            <td class="qty" style="text-align: center;"></td>
-            <td class="unit" style="text-align: center;"></td>
-            <td><input type="number" class="rate" oninput="calculateAmount(this)" style="width: 100%; border: none;"></td>
-            <td><input type="number" class="amount" oninput="calculateQuantity(this)" style="width: 100%; border: none;"></td>
-        `;
-
-        table.appendChild(row);
-    }
-
-    function updateRow(select) {
-        const row = select.closest("tr");
-        const selectedOption = select.options[select.selectedIndex];
-        row.querySelector(".hsn").innerText = selectedOption.dataset.hsn || "";
-        row.querySelector(".unit").innerText = selectedOption.dataset.unit || "";
-    }
-
-    function calculateAmount(input) {
-        const row = input.closest("tr");
-        const rate = parseFloat(row.querySelector(".rate").value) || 0;
-        const amount = parseFloat(row.querySelector(".amount").value) || 0;
-
-        if (rate > 0) {
-            const qty = amount / rate;
-            row.querySelector(".qty").innerText = qty.toFixed(2);
-        }
-
-        calculateTotals();
-    }
-
-    function calculateQuantity(input) {
-        const row = input.closest("tr");
-        const rate = parseFloat(row.querySelector(".rate").value) || 0;
-        const amount = parseFloat(input.value) || 0;
-
-        if (rate > 0) {
-            const qty = amount / rate;
-            row.querySelector(".qty").innerText = qty.toFixed(2);
-        }
-
-        calculateTotals();
-    }
-
-    function calculateTotals() {
-        const rows = document.querySelectorAll("#productTable tr");
-        let taxableAmount = 0;
-
-        rows.forEach(row => {
-            const amount = parseFloat(row.querySelector(".amount").value) || 0;
-            taxableAmount += amount;
-        });
-
-        const sgst = Math.round(taxableAmount * 0.025);
-        const cgst = Math.round(taxableAmount * 0.025);
-        const grandTotal = taxableAmount + sgst + cgst;
-
-        document.getElementById("taxableAmount").innerText = taxableAmount.toFixed(2);
-        document.getElementById("sgst").innerText = sgst.toFixed(2);
-        document.getElementById("cgst").innerText = cgst.toFixed(2);
-        document.getElementById("grandTotal").innerText = grandTotal.toFixed(2);
-
-        document.getElementById("invoiceWords").innerText = numberToWords(grandTotal);
-    }
-
     function numberToWords(number) {
-        // Basic function to convert numbers to words
-        // Replace with full implementation if needed
+        // Basic number-to-words function
         return number + " INR Only";
     }
 </script>
