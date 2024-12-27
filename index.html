@@ -3,216 +3,205 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tax Invoice</title>
+    <title>Invoice</title>
     <style>
         body {
             font-family: Arial, sans-serif;
+            font-size: 12px;
             margin: 0;
             padding: 0;
-            line-height: 1.5;
-        }
-
-        .invoice-container {
-            width: 210mm;
-            height: 297mm; /* A4 size */
-            margin: auto;
-            padding: 20mm;
             box-sizing: border-box;
+        }
+
+        .container {
+            width: 210mm;
+            height: 297mm;
+            padding: 20mm;
+            margin: auto;
             border: 1px solid #000;
-            position: relative;
         }
 
-        .header {
+        .header, .footer {
+            width: 100%;
             text-align: center;
-            margin-bottom: 10px;
         }
 
-        .header h1 {
-            font-size: 22px;
-            font-weight: bold;
-            margin: 0;
+        .firm-details {
+            text-align: left;
+            margin-bottom: 20px;
         }
 
-        .header h2 {
-            font-size: 18px;
-            margin: 0;
-            font-weight: bold;
-        }
-
-        .header p {
-            font-size: 14px;
-            margin: 0;
-        }
-
-        .section {
-            display: flex;
-            justify-content: space-between;
-            font-size: 14px;
-            margin-bottom: 10px;
-        }
-
-        .section div {
-            width: 48%;
-        }
-
-        table {
+        .details, .product-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 14px;
-            margin-top: 10px;
+            margin-bottom: 20px;
         }
 
-        th, td {
+        .details th, .details td, .product-table th, .product-table td {
             border: 1px solid #000;
             padding: 5px;
-            text-align: left;
+        }
+
+        .details th {
+            width: 25%;
+        }
+
+        .product-table th, .product-table td {
+            text-align: center;
         }
 
         .totals {
-            margin-top: 20px;
-            display: flex;
-            justify-content: space-between;
-            font-size: 14px;
-        }
-
-        .totals .amount-words {
-            width: 50%;
-        }
-
-        .totals .tax-summary {
+            float: right;
             width: 40%;
+            margin-top: 20px;
+        }
+
+        .totals table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .totals th, .totals td {
+            border: 1px solid #000;
+            padding: 5px;
             text-align: right;
         }
 
-        .footer {
-            position: absolute;
-            bottom: 20mm;
-            left: 20mm;
-            right: 20mm;
-            font-size: 14px;
-        }
-
-        .footer p {
-            margin: 0;
+        .declaration {
+            margin-top: 50px;
+            text-align: left;
+            font-size: 10px;
         }
 
         .signature {
-            text-align: right;
-            margin-top: 30px;
-        }
-
-        .print-button {
+            float: right;
+            margin-top: 50px;
             text-align: center;
-            margin-top: 20px;
-        }
-
-        @media print {
-            .print-button {
-                display: none;
-            }
-
-            body {
-                margin: 0;
-                padding: 0;
-            }
-
-            .invoice-container {
-                margin: 0;
-                padding: 0;
-                border: none;
-                width: 100%;
-                height: 100%;
-            }
         }
     </style>
 </head>
 <body>
-
-<div class="invoice-container">
-    <div class="header">
-        <p>GSTIN: 07AGGPK5556M1ZX</p>
-        <h1>ANAS TRADERS</h1>
-        <p>4760/2 Ground Floor, Jaipuria Building, Jogiwara, Nai Sarak, Delhi-06, Mob.: 9899558755</p>
-        <h2>Tax Invoice</h2>
-    </div>
-
-    <!-- Invoice Details Section -->
-    <div class="section">
-        <div>
-            <p><strong>Consignee (Ship to):</strong></p>
-            <p>Name: ______________________________</p>
-            <p>Address: ____________________________</p>
-            <p>State Name: _________________________</p>
-            <p>State Code: ___________</p>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>ANAS TRADERS</h1>
+            <p>Address: 4760/2 Ground Floor, Jaipuria Building, Jogiwar, Nai Sarak, Delhi-06</p>
+            <p>GSTIN: 07AGGPK5556M1ZX | Mob.: 9899558755</p>
         </div>
-        <div>
-            <p>Invoice No.: <input type="text" id="invoiceNo" style="border: none; border-bottom: 1px solid #000; width: 120px;"></p>
-            <p>Dated: <input type="date" id="invoiceDate" style="border: none; border-bottom: 1px solid #000;"></p>
-            <p>Delivery Note: _______________________</p>
-            <p>Delivery Terms: ______________________</p>
-        </div>
-    </div>
 
-    <p><strong>Buyer (Bill to):</strong> Cash</p>
-    <p>State Name: ________________________</p>
-    <p>State Code: _________</p>
-
-    <!-- Product Table -->
-    <table id="productTable">
-        <thead>
+        <!-- Invoice Details -->
+        <table class="details">
             <tr>
-                <th>Sr. No.</th>
-                <th>Description of Goods</th>
-                <th>HSN Code</th>
-                <th>Qty</th>
-                <th>Unit</th>
-                <th>Rate</th>
-                <th>Amount</th>
+                <th>Invoice No.</th>
+                <td><input type="text" id="invoiceNo" style="width: 100%;"></td>
+                <th>Date</th>
+                <td><input type="date" id="date" style="width: 100%;"></td>
             </tr>
-        </thead>
-        <tbody>
-            <!-- Rows Will Be Dynamically Added -->
-        </tbody>
-    </table>
+            <tr>
+                <th>Buyer (Bill to)</th>
+                <td>Cash</td>
+                <th>Delivery Note</th>
+                <td><input type="text" id="deliveryNote" style="width: 100%;"></td>
+            </tr>
+        </table>
 
-    <!-- Totals Section -->
-    <div class="totals">
-        <div class="amount-words">
-            <p><strong>Amount Chargeable (in Words):</strong></p>
-            <p id="invoiceWords">______________________________________________________________________</p>
-        </div>
-        <div class="tax-summary">
-            <p>Taxable Amount: <span id="taxableAmount">0</span></p>
-            <p>SGST (2.5%): <span id="sgst">0</span></p>
-            <p>CGST (2.5%): <span id="cgst">0</span></p>
-            <p><strong>Grand Total: <span id="grandTotal">0</span></strong></p>
-        </div>
-    </div>
+        <!-- Product Table -->
+        <table class="product-table">
+            <thead>
+                <tr>
+                    <th>Sr. No.</th>
+                    <th>Description of Goods</th>
+                    <th>HSN Code</th>
+                    <th>Unit</th>
+                    <th>Rate</th>
+                    <th>Amount</th>
+                </tr>
+            </thead>
+            <tbody id="productRows">
+                <tr>
+                    <td>1</td>
+                    <td>
+                        <select onchange="updateHSNAndUnit(this)">
+                            <option value="">Select Product</option>
+                            <option value="Fabric">Fabric</option>
+                            <option value="Saree">Saree</option>
+                            <option value="Suit Unstitched">Suit Unstitched</option>
+                        </select>
+                    </td>
+                    <td id="hsn1">-</td>
+                    <td id="unit1">-</td>
+                    <td><input type="number" id="rate1" oninput="calculateTotal(1)"></td>
+                    <td><input type="number" id="amount1" oninput="calculateTotal(1)"></td>
+                </tr>
+            </tbody>
+        </table>
 
-    <!-- Footer Section -->
-    <div class="footer">
-        <p><strong>E.&O.E.</strong></p>
-        <p>Goods once sold will not be taken back.</p>
-        <p>We declare that this invoice shows the actual price of the goods described and that all particulars are true and correct.</p>
+        <!-- Totals -->
+        <div class="totals">
+            <table>
+                <tr>
+                    <th>Taxable Amount</th>
+                    <td id="taxableAmount">0</td>
+                </tr>
+                <tr>
+                    <th>SGST (2.5%)</th>
+                    <td id="sgst">0</td>
+                </tr>
+                <tr>
+                    <th>CGST (2.5%)</th>
+                    <td id="cgst">0</td>
+                </tr>
+                <tr>
+                    <th>Grand Total</th>
+                    <td id="grandTotal">0</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Declaration -->
+        <div class="declaration">
+            <p>Amount Chargeable (in words): <span id="amountInWords"></span></p>
+            <p>Declaration: We declare that this invoice shows the actual price of the goods described and that all particulars are true and correct.</p>
+        </div>
+
+        <!-- Signature -->
         <div class="signature">
-            For ANAS TRADERS<br>
-            <br><br>
-            Auth. Signature
+            <p>For ANAS TRADERS</p>
+            <p>Authorized Signatory</p>
         </div>
     </div>
-</div>
 
-<!-- Print Button -->
-<div class="print-button">
-    <button onclick="window.print()" style="padding: 10px 20px; font-size: 16px;">Print Invoice</button>
-</div>
+    <script>
+        function updateHSNAndUnit(select) {
+            const product = select.value;
+            const rowId = select.parentNode.parentNode.rowIndex;
+            const hsn = document.getElementById('hsn' + rowId);
+            const unit = document.getElementById('unit' + rowId);
 
-<script>
-    function numberToWords(number) {
-        // Basic number-to-words function
-        return number + " INR Only";
-    }
-</script>
+            if (product === 'Fabric') {
+                hsn.innerText = '5408';
+                unit.innerText = 'mtr';
+            } else if (product === 'Saree' || product === 'Suit Unstitched') {
+                hsn.innerText = '5407';
+                unit.innerText = 'pc';
+            } else {
+                hsn.innerText = '-';
+                unit.innerText = '-';
+            }
+        }
 
+        function calculateTotal(row) {
+            const rate = parseFloat(document.getElementById('rate' + row).value) || 0;
+            const amount = parseFloat(document.getElementById('amount' + row).value) || 0;
+
+            document.getElementById('taxableAmount').innerText = amount.toFixed(2);
+
+            const sgst = (amount * 0.025).toFixed(0);
+            const cgst = (amount * 0.025).toFixed(0);
+            document.getElementById('sgst').innerText = sgst;
+            document.getElementById('cgst').innerText = cgst;
+            document.getElementById('grandTotal').innerText = (amount + parseFloat(sgst) + parseFloat(cgst)).toFixed(2);
+        }
+    </script>
 </body>
 </html>
