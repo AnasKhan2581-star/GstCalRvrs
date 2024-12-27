@@ -19,16 +19,20 @@
             padding: 20mm;
             margin: auto;
             border: 1px solid #000;
-        }
-
-        .header, .footer {
-            width: 100%;
-            text-align: center;
+            position: relative;
         }
 
         .firm-details {
             text-align: left;
             margin-bottom: 20px;
+        }
+
+        .header {
+            margin-bottom: 20px;
+        }
+
+        .header p {
+            margin: 2px 0;
         }
 
         .details, .product-table {
@@ -68,23 +72,29 @@
         }
 
         .declaration {
-            margin-top: 50px;
-            text-align: left;
+            position: absolute;
+            bottom: 50px;
+            left: 20px;
             font-size: 10px;
         }
 
         .signature {
-            float: right;
-            margin-top: 50px;
+            position: absolute;
+            bottom: 50px;
+            right: 20px;
             text-align: center;
+        }
+
+        button {
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Header -->
-        <div class="header">
-            <h1>ANAS TRADERS</h1>
+        <!-- Firm Details -->
+        <div class="firm-details">
+            <h2>ANAS TRADERS</h2>
             <p>Address: 4760/2 Ground Floor, Jaipuria Building, Jogiwar, Nai Sarak, Delhi-06</p>
             <p>GSTIN: 07AGGPK5556M1ZX | Mob.: 9899558755</p>
         </div>
@@ -99,7 +109,7 @@
             </tr>
             <tr>
                 <th>Buyer (Bill to)</th>
-                <td>Cash</td>
+                <td><input type="text" id="buyer" style="width: 100%;"></td>
                 <th>Delivery Note</th>
                 <td><input type="text" id="deliveryNote" style="width: 100%;"></td>
             </tr>
@@ -130,11 +140,12 @@
                     </td>
                     <td id="hsn1">-</td>
                     <td id="unit1">-</td>
-                    <td><input type="number" id="rate1" oninput="calculateTotal(1)"></td>
-                    <td><input type="number" id="amount1" oninput="calculateTotal(1)"></td>
+                    <td><input type="number" id="rate1" oninput="calculateTotal()"></td>
+                    <td><input type="number" id="amount1" oninput="calculateTotal()"></td>
                 </tr>
             </tbody>
         </table>
+        <button onclick="addProductRow()">Add Product</button>
 
         <!-- Totals -->
         <div class="totals">
@@ -169,38 +180,68 @@
             <p>For ANAS TRADERS</p>
             <p>Authorized Signatory</p>
         </div>
+
+        <!-- Print Button -->
+        <button onclick="window.print()">Print Invoice</button>
     </div>
 
     <script>
+        let productCount = 1;
+
+        function addProductRow() {
+            productCount++;
+            const tbody = document.getElementById("productRows");
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td>${productCount}</td>
+                <td>
+                    <select onchange="updateHSNAndUnit(this)">
+                        <option value="">Select Product</option>
+                        <option value="Fabric">Fabric</option>
+                        <option value="Saree">Saree</option>
+                        <option value="Suit Unstitched">Suit Unstitched</option>
+                    </select>
+                </td>
+                <td id="hsn${productCount}">-</td>
+                <td id="unit${productCount}">-</td>
+                <td><input type="number" id="rate${productCount}" oninput="calculateTotal()"></td>
+                <td><input type="number" id="amount${productCount}" oninput="calculateTotal()"></td>
+            `;
+            tbody.appendChild(row);
+        }
+
         function updateHSNAndUnit(select) {
             const product = select.value;
             const rowId = select.parentNode.parentNode.rowIndex;
-            const hsn = document.getElementById('hsn' + rowId);
-            const unit = document.getElementById('unit' + rowId);
+            const hsn = document.getElementById(`hsn${rowId}`);
+            const unit = document.getElementById(`unit${rowId}`);
 
-            if (product === 'Fabric') {
-                hsn.innerText = '5408';
-                unit.innerText = 'mtr';
-            } else if (product === 'Saree' || product === 'Suit Unstitched') {
-                hsn.innerText = '5407';
-                unit.innerText = 'pc';
+            if (product === "Fabric") {
+                hsn.innerText = "5408";
+                unit.innerText = "mtr";
+            } else if (product === "Saree" || product === "Suit Unstitched") {
+                hsn.innerText = "5407";
+                unit.innerText = "pc";
             } else {
-                hsn.innerText = '-';
-                unit.innerText = '-';
+                hsn.innerText = "-";
+                unit.innerText = "-";
             }
         }
 
-        function calculateTotal(row) {
-            const rate = parseFloat(document.getElementById('rate' + row).value) || 0;
-            const amount = parseFloat(document.getElementById('amount' + row).value) || 0;
+        function calculateTotal() {
+            let taxableAmount = 0;
+            for (let i = 1; i <= productCount; i++) {
+                const amount = parseFloat(document.getElementById(`amount${i}`).value) || 0;
+                taxableAmount += amount;
+            }
+            const sgst = (taxableAmount * 0.025).toFixed(2);
+            const cgst = (taxableAmount * 0.025).toFixed(2);
+            const grandTotal = (taxableAmount + parseFloat(sgst) + parseFloat(cgst)).toFixed(2);
 
-            document.getElementById('taxableAmount').innerText = amount.toFixed(2);
-
-            const sgst = (amount * 0.025).toFixed(0);
-            const cgst = (amount * 0.025).toFixed(0);
-            document.getElementById('sgst').innerText = sgst;
-            document.getElementById('cgst').innerText = cgst;
-            document.getElementById('grandTotal').innerText = (amount + parseFloat(sgst) + parseFloat(cgst)).toFixed(2);
+            document.getElementById("taxableAmount").innerText = taxableAmount.toFixed(2);
+            document.getElementById("sgst").innerText = sgst;
+            document.getElementById("cgst").innerText = cgst;
+            document.getElementById("grandTotal").innerText = grandTotal;
         }
     </script>
 </body>
