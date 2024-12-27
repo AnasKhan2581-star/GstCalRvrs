@@ -3,246 +3,129 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Invoice</title>
+    <title>Tax Invoice</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            font-size: 12px;
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+            font-size: 14px;
+            margin: 20px;
         }
-
-        .container {
-            width: 210mm;
-            height: 297mm;
-            padding: 20mm;
-            margin: auto;
+        .invoice {
+            width: 800px;
+            margin: 0 auto;
             border: 1px solid #000;
-            position: relative;
+            padding: 20px;
         }
-
-        .firm-details {
-            text-align: left;
-            margin-bottom: 20px;
+        .header, .footer, .details, .items, .totals {
+            width: 100%;
+            margin-bottom: 10px;
         }
-
-        .header {
-            margin-bottom: 20px;
+        .header h1, .header h2 {
+            text-align: center;
+            margin: 0;
         }
-
-        .header p {
-            margin: 2px 0;
+        .header h2 {
+            margin-top: 5px;
         }
-
-        .details, .product-table {
+        .details, .items, .totals {
+            border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
+            padding: 10px 0;
+        }
+        .details table, .items table, .totals table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 20px;
         }
-
-        .details th, .details td, .product-table th, .product-table td {
-            border: 1px solid #000;
+        .details td, .items th, .items td, .totals td {
             padding: 5px;
+            border: 1px solid #000;
+            text-align: left;
         }
-
-        .details th {
-            width: 25%;
+        .items th {
+            background-color: #f0f0f0;
         }
-
-        .product-table th, .product-table td {
+        .items td {
             text-align: center;
         }
-
-        .totals {
-            float: right;
-            width: 40%;
-            margin-top: 20px;
-        }
-
-        .totals table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .totals th, .totals td {
-            border: 1px solid #000;
-            padding: 5px;
+        .totals td {
             text-align: right;
         }
-
-        .declaration {
-            position: absolute;
-            bottom: 50px;
-            left: 20px;
-            font-size: 10px;
-        }
-
-        .signature {
-            position: absolute;
-            bottom: 50px;
-            right: 20px;
-            text-align: center;
-        }
-
-        button {
-            margin-top: 20px;
+        .totals td:first-child {
+            text-align: left;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Firm Details -->
-        <div class="firm-details">
-            <h2>ANAS TRADERS</h2>
-            <p>Address: 4760/2 Ground Floor, Jaipuria Building, Jogiwar, Nai Sarak, Delhi-06</p>
-            <p>GSTIN: 07AGGPK5556M1ZX | Mob.: 9899558755</p>
+    <div class="invoice">
+        <div class="header">
+            <h1>Tax Invoice</h1>
+            <h2>S.S. ENTERPRISES</h2>
+            <p>3637 Netaji Subash Marg Daryaganj<br>GSTIN/UIN: 07CWXPS6657L1ZD<br>State Name: Delhi, Code: 07<br>E-Mail: ssenterprisesdaryaganj@gmail.com</p>
         </div>
-
-        <!-- Invoice Details -->
-        <table class="details">
-            <tr>
-                <th>Invoice No.</th>
-                <td><input type="text" id="invoiceNo" style="width: 100%;"></td>
-                <th>Date</th>
-                <td><input type="date" id="date" style="width: 100%;"></td>
-            </tr>
-            <tr>
-                <th>Buyer (Bill to)</th>
-                <td><input type="text" id="buyer" style="width: 100%;"></td>
-                <th>Delivery Note</th>
-                <td><input type="text" id="deliveryNote" style="width: 100%;"></td>
-            </tr>
-        </table>
-
-        <!-- Product Table -->
-        <table class="product-table">
-            <thead>
-                <tr>
-                    <th>Sr. No.</th>
-                    <th>Description of Goods</th>
-                    <th>HSN Code</th>
-                    <th>Unit</th>
-                    <th>Rate</th>
-                    <th>Amount</th>
-                </tr>
-            </thead>
-            <tbody id="productRows">
-                <tr>
-                    <td>1</td>
-                    <td>
-                        <select onchange="updateHSNAndUnit(this)">
-                            <option value="">Select Product</option>
-                            <option value="Fabric">Fabric</option>
-                            <option value="Saree">Saree</option>
-                            <option value="Suit Unstitched">Suit Unstitched</option>
-                        </select>
-                    </td>
-                    <td id="hsn1">-</td>
-                    <td id="unit1">-</td>
-                    <td><input type="number" id="rate1" oninput="calculateTotal()"></td>
-                    <td><input type="number" id="amount1" oninput="calculateTotal()"></td>
-                </tr>
-            </tbody>
-        </table>
-        <button onclick="addProductRow()">Add Product</button>
-
-        <!-- Totals -->
-        <div class="totals">
+        <div class="details">
             <table>
                 <tr>
-                    <th>Taxable Amount</th>
-                    <td id="taxableAmount">0</td>
+                    <td>Invoice No.<br><strong>SS/24-25/5979</strong></td>
+                    <td>Dated<br><strong>31-Dec-24</strong></td>
+                    <td>Mode/Terms of Payment<br><strong>Cash Sale</strong></td>
                 </tr>
                 <tr>
-                    <th>SGST (2.5%)</th>
-                    <td id="sgst">0</td>
-                </tr>
-                <tr>
-                    <th>CGST (2.5%)</th>
-                    <td id="cgst">0</td>
-                </tr>
-                <tr>
-                    <th>Grand Total</th>
-                    <td id="grandTotal">0</td>
+                    <td>State Name<br><strong>Delhi, Code: 07</strong></td>
+                    <td>Buyer (Bill to)<br><strong>Anas</strong></td>
+                    <td>State Name<br><strong>Delhi, Code: 07</strong></td>
                 </tr>
             </table>
         </div>
-
-        <!-- Declaration -->
-        <div class="declaration">
-            <p>Amount Chargeable (in words): <span id="amountInWords"></span></p>
-            <p>Declaration: We declare that this invoice shows the actual price of the goods described and that all particulars are true and correct.</p>
+        <div class="items">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Description of Goods</th>
+                        <th>HSN/SAC</th>
+                        <th>Quantity</th>
+                        <th>Rate</th>
+                        <th>Per</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>PORTRONICS POWER SHUTTER 22.5W</td>
+                        <td>85171300</td>
+                        <td>1 PCS</td>
+                        <td>1,525.40</td>
+                        <td>PCS</td>
+                        <td>1,525.40</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
-
-        <!-- Signature -->
-        <div class="signature">
-            <p>For ANAS TRADERS</p>
-            <p>Authorized Signatory</p>
+        <div class="totals">
+            <table>
+                <tr>
+                    <td>SGST 9%</td>
+                    <td>137.29</td>
+                </tr>
+                <tr>
+                    <td>CGST 9%</td>
+                    <td>137.29</td>
+                </tr>
+                <tr>
+                    <td>Short & Excess</td>
+                    <td>0.02</td>
+                </tr>
+                <tr>
+                    <td><strong>Total</strong></td>
+                    <td><strong>1,800.00</strong></td>
+                </tr>
+            </table>
+            <p><strong>Amount Chargeable (in words): Indian Rupees One Thousand Eight Hundred Only</strong></p>
+            <p><strong>Tax Amount (in words): Indian Rupees Two Hundred Seventy Four and Fifty Eight Paise Only</strong></p>
         </div>
-
-        <!-- Print Button -->
-        <button onclick="window.print()">Print Invoice</button>
+        <div class="footer">
+            <p><strong>Declaration:</strong> We declare that this invoice shows the actual price of the goods described and that all particulars are true and correct.</p>
+            <p style="text-align: right;">Authorized Signatory<br>S.S. ENTERPRISES</p>
+        </div>
     </div>
-
-    <script>
-        let productCount = 1;
-
-        function addProductRow() {
-            productCount++;
-            const tbody = document.getElementById("productRows");
-            const row = document.createElement("tr");
-            row.innerHTML = `
-                <td>${productCount}</td>
-                <td>
-                    <select onchange="updateHSNAndUnit(this)">
-                        <option value="">Select Product</option>
-                        <option value="Fabric">Fabric</option>
-                        <option value="Saree">Saree</option>
-                        <option value="Suit Unstitched">Suit Unstitched</option>
-                    </select>
-                </td>
-                <td id="hsn${productCount}">-</td>
-                <td id="unit${productCount}">-</td>
-                <td><input type="number" id="rate${productCount}" oninput="calculateTotal()"></td>
-                <td><input type="number" id="amount${productCount}" oninput="calculateTotal()"></td>
-            `;
-            tbody.appendChild(row);
-        }
-
-        function updateHSNAndUnit(select) {
-            const product = select.value;
-            const rowId = select.parentNode.parentNode.rowIndex;
-            const hsn = document.getElementById(`hsn${rowId}`);
-            const unit = document.getElementById(`unit${rowId}`);
-
-            if (product === "Fabric") {
-                hsn.innerText = "5408";
-                unit.innerText = "mtr";
-            } else if (product === "Saree" || product === "Suit Unstitched") {
-                hsn.innerText = "5407";
-                unit.innerText = "pc";
-            } else {
-                hsn.innerText = "-";
-                unit.innerText = "-";
-            }
-        }
-
-        function calculateTotal() {
-            let taxableAmount = 0;
-            for (let i = 1; i <= productCount; i++) {
-                const amount = parseFloat(document.getElementById(`amount${i}`).value) || 0;
-                taxableAmount += amount;
-            }
-            const sgst = (taxableAmount * 0.025).toFixed(2);
-            const cgst = (taxableAmount * 0.025).toFixed(2);
-            const grandTotal = (taxableAmount + parseFloat(sgst) + parseFloat(cgst)).toFixed(2);
-
-            document.getElementById("taxableAmount").innerText = taxableAmount.toFixed(2);
-            document.getElementById("sgst").innerText = sgst;
-            document.getElementById("cgst").innerText = cgst;
-            document.getElementById("grandTotal").innerText = grandTotal;
-        }
-    </script>
 </body>
 </html>
