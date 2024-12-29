@@ -1,131 +1,212 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tax Invoice</title>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Split Taxable Amount and Generate Bill Options</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            font-size: 14px;
-            margin: 20px;
-        }
-        .invoice {
-            width: 800px;
-            margin: 0 auto;
-            border: 1px solid #000;
-            padding: 20px;
-        }
-        .header, .footer, .details, .items, .totals {
-            width: 100%;
-            margin-bottom: 10px;
-        }
-        .header h1, .header h2 {
-            text-align: center;
-            margin: 0;
-        }
-        .header h2 {
-            margin-top: 5px;
-        }
-        .details, .items, .totals {
-            border-top: 1px solid #000;
-            border-bottom: 1px solid #000;
-            padding: 10px 0;
-        }
-        .details table, .items table, .totals table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        .details td, .items th, .items td, .totals td {
-            padding: 5px;
-            border: 1px solid #000;
-            text-align: left;
-        }
-        .items th {
-            background-color: #f0f0f0;
-        }
-        .items td {
-            text-align: center;
-        }
-        .totals td {
-            text-align: right;
-        }
-        .totals td:first-child {
-            text-align: left;
-        }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        margin: 20px 0;
+      }
+      th, td {
+        border: 1px solid #ddd;
+        text-align: center;
+        padding: 8px;
+      }
+      th {
+        background-color: #f4f4f4;
+      }
+      .bold {
+        font-weight: bold;
+      }
     </style>
-</head>
-<body>
-    <div class="invoice">
-        <div class="header">
-            <h1>Tax Invoice</h1>
-            <h2>S.S. ENTERPRISES</h2>
-            <p>3637 Netaji Subash Marg Daryaganj<br>GSTIN/UIN: 07CWXPS6657L1ZD<br>State Name: Delhi, Code: 07<br>E-Mail: ssenterprisesdaryaganj@gmail.com</p>
-        </div>
-        <div class="details">
-            <table>
-                <tr>
-                    <td>Invoice No.<br><strong>SS/24-25/5979</strong></td>
-                    <td>Dated<br><strong>31-Dec-24</strong></td>
-                    <td>Mode/Terms of Payment<br><strong>Cash Sale</strong></td>
-                </tr>
-                <tr>
-                    <td>State Name<br><strong>Delhi, Code: 07</strong></td>
-                    <td>Buyer (Bill to)<br><strong>Anas</strong></td>
-                    <td>State Name<br><strong>Delhi, Code: 07</strong></td>
-                </tr>
-            </table>
-        </div>
-        <div class="items">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Description of Goods</th>
-                        <th>HSN/SAC</th>
-                        <th>Quantity</th>
-                        <th>Rate</th>
-                        <th>Per</th>
-                        <th>Amount</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>PORTRONICS POWER SHUTTER 22.5W</td>
-                        <td>85171300</td>
-                        <td>1 PCS</td>
-                        <td>1,525.40</td>
-                        <td>PCS</td>
-                        <td>1,525.40</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <div class="totals">
-            <table>
-                <tr>
-                    <td>SGST 9%</td>
-                    <td>137.29</td>
-                </tr>
-                <tr>
-                    <td></td>CGST 9%</td>
-                    <td>137.29</td>
-                </tr>
-                <tr>
-                    <td>Short & Excess</td>
-                    <td>0.02</td>
-                </tr>
-                <tr>
-                    <td><strong>Total</strong></td>
-                    <td><strong>1,800.00</strong></td>
-                </tr>
-            </table>
-            <p><strong>Amount Chargeable (in words): Indian Rupees One Thousand Eight Hundred Only</strong></p>
-            <p><strong>Tax Amount (in words): Indian Rupees Two Hundred Seventy Four and Fifty Eight Paise Only</strong></p>
-        </div>
-        <div class="footer">
-            <p><strong>Declaration:</strong> We declare that this invoice shows the actual price of the goods described and that all particulars are true and correct.</p>
-            <p style="text-align: right;">Authorized Signatory<br>S.S. ENTERPRISES</p>
-        </div>
-    </div>
-</body>
+  </head>
+  <body>
+    <h1>Split Taxable Amount and Generate Bill Options</h1>
+
+    <!-- Input Section -->
+    <label for="grand-total">Grand Total Amount (₹):</label>
+    <input type="number" id="grand-total" /><br /><br />
+    <label for="splits">Number of Splits:</label>
+    <select id="splits">
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="4">4</option>
+      <option value="5">5</option>
+      <option value="6">6</option>
+      <option value="7">7</option>
+    </select><br /><br />
+    <button onclick="generateBillOptions()">Generate Bill Options</button><br /><br />
+
+    <!-- Result Section -->
+    <div id="result"></div>
+
+    <script>
+      function generateBillOptions() {
+        const grandTotal = parseFloat(document.getElementById("grand-total").value);
+        const splits = parseInt(document.getElementById("splits").value);
+        const taxRate = 0.05;
+
+        // Calculate Taxable Amount and Tax Amounts
+        let taxableAmount = Math.round((grandTotal / (1 + taxRate)) * 100) / 100;
+        let taxAmount = Math.round(taxableAmount * taxRate * 100) / 100;
+        let halfTaxAmount = Math.round((taxAmount / 2) * 100) / 100;
+
+        // Adjust tax amounts for proper rounding
+        halfTaxAmount = halfTaxAmount % 1 >= 0.5 ? Math.ceil(halfTaxAmount) : Math.floor(halfTaxAmount);
+        taxAmount = 2 * halfTaxAmount;
+        taxableAmount = Math.round((grandTotal - taxAmount) * 100) / 100;
+
+        // Split the taxable amount
+        const splitAmounts = calculateSplits(taxableAmount, splits);
+
+        // Display Calculated Splits and Tax Details
+        let resultHTML = `
+          <h2>Result:</h2>
+          <div><span class="bold">Taxable Amount: ₹${taxableAmount.toFixed(2)}</span></div>
+          <div><span>5% Tax Amount: ₹${taxAmount.toFixed(2)}</span></div>
+          <div><span class="bold">2.5% Tax Amount: ₹${halfTaxAmount.toFixed(2)}</span></div>
+          <h3>Split Amounts:</h3>
+          <ul>${splitAmounts.map((split) => `<li>₹${split.toFixed(2)}</li>`).join("")}</ul>`;
+
+        // Generate Bill Options for all splits
+        const billOptions = generateBillOptionsForSplits(splitAmounts, taxableAmount);
+
+        if (billOptions.length > 0) {
+          billOptions.forEach((bill, billIndex) => {
+            resultHTML += `<h3>Bill Option ${billIndex + 1}:</h3>`;
+            resultHTML += generateBillTable(bill, taxableAmount, halfTaxAmount, grandTotal);
+          });
+        } else {
+          resultHTML += `<h3>No valid combinations found for the splits.</h3>`;
+        }
+
+        document.getElementById("result").innerHTML = resultHTML;
+      }
+
+      function calculateSplits(amount, splits) {
+        const splitAmounts = [];
+        let remainingAmount = amount;
+
+        for (let i = 0; i < splits - 1; i++) {
+          let split = Math.random() * remainingAmount / 2 + remainingAmount / (splits - i);
+          split = Math.round(split * 2) / 2; // Round to the nearest 0.5
+          splitAmounts.push(split);
+          remainingAmount = Math.round((remainingAmount - split) * 100) / 100;
+        }
+        splitAmounts.push(remainingAmount); // Add the last remaining amount
+        return splitAmounts;
+      }
+
+      function generateBillOptionsForSplits(splitAmounts, taxableAmount) {
+        const options = [];
+
+        function findCombinations(split, minRate, maxRate, description, hsn, unit) {
+          const combinations = [];
+          for (let rate = minRate; rate <= maxRate; rate += 0.25) {
+            const qty = Math.floor(split / rate);
+            const amount = qty * rate;
+            if (amount <= split && qty > 0) {
+              combinations.push({
+                description,
+                hsn,
+                rate: rate.toFixed(2),
+                qty,
+                unit,
+                amount,
+              });
+            }
+          }
+          return combinations;
+        }
+
+        // Generate combinations for each split
+        splitAmounts.forEach((split) => {
+          const sareeCombinations = findCombinations(split, 785, 1485, "Saree", "5407", "pc");
+          const fabricCombinations = findCombinations(split, 85, 125, "Fabric", "5408", "mtr");
+
+          const validCombinations = [...sareeCombinations, ...fabricCombinations];
+          options.push(validCombinations);
+        });
+
+        // Ensure combinations add up to taxable amount
+        const validOptions = [];
+        const totalCombinations = combineOptions(options);
+
+        totalCombinations.forEach((combination) => {
+          const totalAmount = combination.reduce((sum, item) => sum + item.amount, 0);
+          if (Math.abs(totalAmount - taxableAmount) < 0.01) {
+            validOptions.push(combination);
+          }
+        });
+
+        return validOptions;
+      }
+
+      function combineOptions(options, currentIndex = 0, currentCombination = []) {
+        if (currentIndex === options.length) {
+          return [currentCombination];
+        }
+
+        const combinations = [];
+        options[currentIndex].forEach((option) => {
+          combinations.push(
+            ...combineOptions(options, currentIndex + 1, [...currentCombination, option])
+          );
+        });
+
+        return combinations;
+      }
+
+      function generateBillTable(items, taxableAmount, halfTaxAmount, grandTotal) {
+        let tableHTML = `<table>
+          <thead>
+            <tr>
+              <th>Description of Goods</th>
+              <th>HSN Code</th>
+              <th>Rate</th>
+              <th>Qty</th>
+              <th>Unit</th>
+              <th>Split Amount</th>
+            </tr>
+          </thead>
+          <tbody>`;
+
+        items.forEach((item) => {
+          tableHTML += `<tr>
+            <td>${item.description}</td>
+            <td>${item.hsn}</td>
+            <td>${item.rate}</td>
+            <td>${item.qty}</td>
+            <td>${item.unit}</td>
+            <td>${item.amount.toFixed(2)}</td>
+          </tr>`;
+        });
+
+        tableHTML += `
+          <tr>
+            <td colspan="5" class="bold">Taxable Amount</td>
+            <td class="bold">${taxableAmount.toFixed(2)}</td>
+          </tr>
+          <tr>
+            <td colspan="5">2.5% Tax Amount</td>
+            <td>${halfTaxAmount.toFixed(2)}</td>
+          </tr>
+          <tr>
+            <td colspan="5">2.5% Tax Amount</td>
+            <td>${halfTaxAmount.toFixed(2)}</td>
+          </tr>
+          <tr>
+            <td colspan="5" class="bold">Grand Total</td>
+            <td class="bold">${grandTotal.toFixed(2)}</td>
+          </tr>
+        </tbody>
+      </table>`;
+
+        return tableHTML;
+      }
+    </script>
+  </body>
 </html>
