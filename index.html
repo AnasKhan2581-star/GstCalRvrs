@@ -99,19 +99,17 @@
         const fabricRates = { min: 85, max: 125 };
 
         let allCombinations = [];
-        const items = ["Saree", "Fabric"];
-
         const splitCombinations = splitAmounts.map((split) => {
           const options = [];
           for (let rate = sareeRates.min; rate <= sareeRates.max; rate++) {
-            if (split % rate === 0) {
-              const quantity = split / rate;
+            if (Math.abs(split % rate) < 0.01) {
+              const quantity = Math.round((split / rate) * 100) / 100;
               options.push({ item: "Saree", rate, quantity, amount: split });
             }
           }
           for (let rate = fabricRates.min; rate <= fabricRates.max; rate++) {
-            if (split % rate === 0) {
-              const quantity = split / rate;
+            if (Math.abs(split % rate) < 0.01) {
+              const quantity = Math.round((split / rate) * 100) / 100;
               options.push({ item: "Fabric", rate, quantity, amount: split });
             }
           }
@@ -119,9 +117,9 @@
         });
 
         function combineSplits(index, currentCombination, currentTotal) {
-          if (currentTotal > taxableAmount) return;
+          if (currentTotal > taxableAmount + 0.01) return; // Allow small precision error
           if (index === splitCombinations.length) {
-            if (Math.round(currentTotal * 100) / 100 === taxableAmount) {
+            if (Math.abs(currentTotal - taxableAmount) < 0.01) {
               allCombinations.push([...currentCombination]);
             }
             return;
